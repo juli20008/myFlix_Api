@@ -11,13 +11,16 @@ const Movies=Models.Movie;
 const Users=Models.User;
 const Genres=Models.Genre;
 const Directors=Models.Director;
-
+const cors = require('cors');
+app.use(cors({ origin: '*' }))
 
 // Middleware
 app.use(express.static('public'));
 app.use(express.json());
 app.use(morgan('tiny'));
 app.use(bodyParser.json());
+
+const { check, validationResult } = require('express-validator');
 
 let auth = require('./auth')(app);
 const passport = require('passport');
@@ -97,7 +100,22 @@ app.get('/movies/genres/:genreName', passport.authenticate('jwt', { session: fal
       });
   });
 //creates a new user and adds them to the list of users.
-app.post('/users', (req, res, next) => {
+app.post('/users',
+  [
+    check('username', 'Username is required').isLength({min: 5}),
+    check('username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+  ], (req, res) => {
+
+  // check the validation object for errors
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+  let hashedPassword = Users.hashPassword(req.body.password);
   Users.findOne({ username: req.body.username }).then((existingUser) => {
     if (existingUser) {
       return res.status(400).send(req.body.Name + ' already exists');
@@ -105,7 +123,7 @@ app.post('/users', (req, res, next) => {
 
     return Users.create({
       username: req.body.username,
-      password: req.body.password,
+      password: hashedPassword,
       Name: req.body.Name,
       Email: req.body.Email
     }).then((newUser) => {
