@@ -44,10 +44,10 @@ app.get('/', (req, res) => {
 
 // READ
 //Get movies
-app.get('/movies',passport.authenticate('jwt', { session: false }), (req, res) => {
+app.get('/movies', (req, res) => {
     Movies.find()
       .then((movies) => {
-        res.status(201).json(movies);
+        res.status(201).json(movies); 
       })
       .catch((err) => {
         console.error(err);
