@@ -111,7 +111,7 @@ app.get('/movies/genres/:genreName', passport.authenticate('jwt', { session: fal
       });
   });
 //creates a new user and adds them to the list of users.
-app.post('/users',
+app.post('/signup',
   [
     check('username', 'Username is required').isLength({min: 5}),
     check('username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
