@@ -12,10 +12,7 @@ const Users=Models.User;
 const Genres=Models.Genre;
 const Directors=Models.Director;
 const cors = require('cors');
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'https://mysuperflix.netlify.app'];
-
-// Enable CORS for all routes
-app.use(cors({ origin: 'http://localhost:4200' }));
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'https://mysuperflix.netlify.app','http://localhost:4200'];
 
 app.use(cors({
   origin: (origin, callback) => {
